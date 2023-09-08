@@ -1,2 +1,2 @@
-# FireflyLearningClient
-An unofficial Python driver for the Firefly Learning platform. 
+# FireflyClient
+An unofficial Python API wrapper for the Firefly Learning platform. 
