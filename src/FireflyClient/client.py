@@ -98,10 +98,12 @@ Host: {self.host}"""
         Uses the school code written in the config file to fetch the
         corresponding Firefly portal page.
 
-        :raises:
+        Raises:
             InvalidSchoolCodeError: Thrown whenever the client cannot establish a
             connection with the attempted school portal.
-        :return: URL of school portal.
+
+        Returns:
+             URL of school portal.
         """
         res = requests.get(
             url="https://appgateway.fireflysolutions.co.uk"
