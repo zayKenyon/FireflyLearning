@@ -1,3 +1,5 @@
+"""Firefly API Wrapper."""
+
 from xml.etree import ElementTree
 
 import requests
