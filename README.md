@@ -8,3 +8,4 @@ An unofficial Python API wrapper for the Firefly Learning platform.
 # Acknowledgements
 
 [TreasonMay/FireflyAPI](https://github.com/TreasonMay/FireflyAPI)
+[JoshHeng/FireflyAPI](https://github.com/JoshHeng/FireflyAPI)

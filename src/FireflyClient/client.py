@@ -11,9 +11,10 @@ class Client:
     """
 
     def __init__(self, config):
-        self.school_code = config["HOST"]
+        self.school_code = config["SCHOOL_CODE"]
+        self.host = self.__get_school_portal()
 
-    def get_school_portal(self) -> str:
+    def __get_school_portal(self) -> str:
         """
         Uses the school code written in the config file to fetch the
         corresponding Firefly portal page.
@@ -35,3 +36,17 @@ class Client:
 
         address = root.find("address")
         return f"http{(address.get('ssl') == 'true') * 's'}://{address.text}"
+
+    def get_api_version(self) -> str:
+        """
+        Fetches the current API version of Firefly.
+        :return: API version "v.X.Y.Z"
+        """
+        res = requests.get(url=f"{self.host}/login/api/version", timeout=5)
+        root = ElementTree.fromstring(res.text)
+
+        major_version = root.find("majorVersion").text
+        minor_version = root.find("minorVersion").text
+        increment_version = root.find("incrementVersion").text
+
+        return f"v{major_version}.{minor_version}.{increment_version}"
