@@ -1,0 +1,8 @@
+[FireflyClient]
+name = "FireflyClient"
+version = "0.0.1"
+dependencies = [
+    "requests",
+    "python-dotenv",
+    "importlib-metadata; python version == '3",
+]
