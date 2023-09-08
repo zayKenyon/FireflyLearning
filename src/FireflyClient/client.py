@@ -1,10 +1,10 @@
 """Firefly API Wrapper."""
-
+import urllib.parse
 from xml.etree import ElementTree
 
 import requests
 
-from .exceptions import InvalidSchoolCode
+from .exceptions import InvalidSchoolCodeError, HandshakeError
 
 
 class Client:
@@ -13,16 +13,93 @@ class Client:
     """
 
     def __init__(self, config):
+        self.device_id = config["DEVICE_ID"]
+        self.app_id = config["APP_ID"]
         self.school_code = config["SCHOOL_CODE"]
         self.host = self.__get_school_portal()
+        self.token = config["TOKEN"] or None
+        self.session_id = None
+        self.valid = False
+
+        self.__create_integration()
+
+    def __str__(self):
+        return f"""AppId: {self.app_id}
+DeviceId: {self.device_id}
+SessionId: {self.session_id}
+Valid: {self.valid}
+Token: {self.token}
+Code: {self.school_code}
+Host: {self.host}"""
+
+    def __create_integration(self):
+        """
+        Either begins the workflow for creating an integration, or, verifies that the
+        existing one is still valid.
+
+        Returns:
+            bool: True if integration created or authenticated, otherwise False.
+
+        Raises:
+            HandshakeError: Invalid Token Supplied.
+        """
+        if self.token == "<REMOVE ME>":
+            raise HandshakeError
+
+        if self.token is None:
+            token_url = (
+                f"{self.host}/login/api/gettoken"
+                f"?ffauth_device_id={self.device_id}"
+                f"&ffauth_secret"
+                f"&device_id={self.device_id}"
+                f"&app_id={self.app_id}"
+            )
+            sanitised_token_url = urllib.parse.quote(token_url.encode("utf-8"))
+            login_url = f"{self.host}/login/login.aspx?prelogin={sanitised_token_url}"
+            print(
+                "<!> USER ACTION REQUIRED\nPLEASE USE THE FOLLOWING LINK"
+                "\nTHEN ENTER TOKEN INTO .env",
+                "\n",
+                login_url,
+            )
+            return False
+
+        if self.__verify_integration():
+            self.valid = True
+            return True
+
+        return False
+
+    def __verify_integration(self) -> bool:
+        """
+        Verifies whether the Client can successfully connect to the API.
+
+        Returns:
+            bool: True if valid.
+
+        Raises:
+            HandshakeError: If the Client could not authenticate.
+        """
+        url = (
+            f"{self.host}/login/api/verifytoken?"
+            f"ffauth_device_id={self.device_id}"
+            f"&ffauth_secret={self.token}"
+        )
+        res = requests.get(url=url, timeout=5)
+
+        if not res.ok:
+            raise HandshakeError
+
+        self.session_id = res.cookies["ASP.NET_SessionId"]
+        return True
 
     def __get_school_portal(self) -> str:
         """
         Uses the school code written in the config file to fetch the
         corresponding Firefly portal page.
 
-        Raises:
-            InvalidSchoolCode: Thrown whenever the client cannot establish a
+        :raises:
+            InvalidSchoolCodeError: Thrown whenever the client cannot establish a
             connection with the attempted school portal.
         :return: URL of school portal.
         """
@@ -34,7 +111,7 @@ class Client:
         root = ElementTree.fromstring(res.text)
 
         if not root.attrib.get("exists") or not root.attrib.get("enabled"):
-            raise InvalidSchoolCode
+            raise InvalidSchoolCodeError
 
         address = root.find("address")
         return f"http{(address.get('ssl') == 'true') * 's'}://{address.text}"
