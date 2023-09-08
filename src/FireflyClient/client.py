@@ -13,8 +13,8 @@ class Client:
     """
 
     def __init__(self, config):
-        self.device_id = config["DEVICE_ID"]
-        self.app_id = config["APP_ID"]
+        self._device_id = config["DEVICE_ID"]
+        self._app_id = config["APP_ID"]
         self.school_code = config["SCHOOL_CODE"]
         self.host = self.__get_school_portal()
         self.token = config["TOKEN"] or None
@@ -24,15 +24,15 @@ class Client:
         self.__create_integration()
 
     def __str__(self):
-        return f"""AppId: {self.app_id}
-DeviceId: {self.device_id}
+        return f"""AppId: {self._app_id}
+DeviceId: {self._device_id}
 SessionId: {self.session_id}
 Valid: {self.valid}
 Token: {self.token}
 Code: {self.school_code}
 Host: {self.host}"""
 
-    def __create_integration(self):
+    def __create_integration(self) -> bool:
         """
         Either begins the workflow for creating an integration, or, verifies that the
         existing one is still valid.
@@ -49,10 +49,10 @@ Host: {self.host}"""
         if self.token is None:
             token_url = (
                 f"{self.host}/login/api/gettoken"
-                f"?ffauth_device_id={self.device_id}"
+                f"?ffauth_device_id={self._device_id}"
                 f"&ffauth_secret"
-                f"&device_id={self.device_id}"
-                f"&app_id={self.app_id}"
+                f"&device_id={self._device_id}"
+                f"&app_id={self._app_id}"
             )
             sanitised_token_url = urllib.parse.quote(token_url.encode("utf-8"))
             login_url = f"{self.host}/login/login.aspx?prelogin={sanitised_token_url}"
@@ -82,7 +82,7 @@ Host: {self.host}"""
         """
         url = (
             f"{self.host}/login/api/verifytoken?"
-            f"ffauth_device_id={self.device_id}"
+            f"ffauth_device_id={self._device_id}"
             f"&ffauth_secret={self.token}"
         )
         res = requests.get(url=url, timeout=5)
