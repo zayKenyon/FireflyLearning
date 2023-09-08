@@ -87,7 +87,7 @@ Host: {self.host}"""
         )
         res = requests.get(url=url, timeout=5)
 
-        if not res.ok:
+        if not res.ok or res.json()["valid"] is False:
             raise HandshakeError
 
         self.session_id = res.cookies["ASP.NET_SessionId"]
