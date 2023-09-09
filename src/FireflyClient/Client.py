@@ -1,4 +1,5 @@
 """Firefly API Wrapper."""
+import datetime
 import urllib.parse
 from xml.etree import ElementTree
 
@@ -13,13 +14,21 @@ class Client:
     """
 
     def __init__(self, config):
+        """🤖"""
         self._device_id: str = config["DEVICE_ID"]
+        """Id of the device this is being ran on."""
         self._app_id: str = config["APP_ID"]
+        """Id of the app this is being ran through."""
         self.school_code: str = config["SCHOOL_CODE"]
+        """School code this is being hosted by."""
         self.host: str = self.__get_school_portal
+        """School's unique Firefly domain."""
         self.token: str = config["TOKEN"] or None
+        """Used to authenticate requests."""
         self.session_id: str | None = None
-        self.valid: bool = False
+        """Cached cookie to avoid re-authentication."""
+        self.ready_at: datetime.datetime | None = None
+        """Time at which the client was last regarded as being authenticated."""
 
         self.__create_integration()
 
@@ -27,7 +36,7 @@ class Client:
         return f"""AppId: {self._app_id}
 DeviceId: {self._device_id}
 SessionId: {self.session_id}
-Valid: {self.valid}
+ReadyAt: {self.ready_at}
 Token: {self.token}
 Code: {self.school_code}
 Host: {self.host}"""
@@ -65,7 +74,7 @@ Host: {self.host}"""
             return False
 
         if self.__verify_integration():
-            self.valid = True
+            self.ready_at = datetime.datetime.now()
             return True
 
         return False
