@@ -16,7 +16,7 @@ class Client:
         self._device_id = config["DEVICE_ID"]
         self._app_id = config["APP_ID"]
         self.school_code = config["SCHOOL_CODE"]
-        self.host = self.__get_school_portal()
+        self.host = self.__get_school_portal
         self.token = config["TOKEN"] or None
         self.session_id = None
         self.valid = False
@@ -93,6 +93,7 @@ Host: {self.host}"""
         self.session_id = res.cookies["ASP.NET_SessionId"]
         return True
 
+    @property
     def __get_school_portal(self) -> str:
         """
         Uses the school code written in the config file to fetch the
