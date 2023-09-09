@@ -4,5 +4,6 @@ version = "0.0.1"
 dependencies = [
     "requests",
     "python-dotenv",
+    "pdoc",
     "importlib-metadata; python version == '3",
 ]
