@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 import requests
 
 from .Exceptions import InvalidSchoolCodeError, HandshakeError
+from .TaskManager import TaskManager
 
 
 class Client:
@@ -14,10 +15,11 @@ class Client:
     """
 
     def __init__(self, config):
-        """🤖"""
-        self._device_id: str = config["DEVICE_ID"]
+        """The main hub for interacting with the Firefly API, and the starting point
+        for any integration."""
+        self.device_id: str = config["DEVICE_ID"]
         """Id of the device this is being ran on."""
-        self._app_id: str = config["APP_ID"]
+        self.app_id: str = config["APP_ID"]
         """Id of the app this is being ran through."""
         self.school_code: str = config["SCHOOL_CODE"]
         """School code this is being hosted by."""
@@ -25,17 +27,20 @@ class Client:
         """School's unique Firefly domain."""
         self.token: str = config["TOKEN"] or None
         """Used to authenticate requests."""
-        self.session_id: str | None = None
+        self.session: requests.Session | None = None
         """Cached 🍪 to avoid re-authentication."""
         self.ready_at: datetime.datetime | None = None
         """Time at which the client was last regarded as being authenticated."""
 
+        self.tasks: TaskManager = TaskManager(self)
+        """All of the tasks relevant to the student user."""
+
         self.__create_integration()
 
     def __str__(self):
-        return f"""AppId: {self._app_id}
-DeviceId: {self._device_id}
-SessionId: {self.session_id}
+        return f"""AppId: {self.app_id}
+DeviceId: {self.device_id}
+SessionId: {self.session}
 ReadyAt: {self.ready_at}
 Token: {self.token}
 Code: {self.school_code}
@@ -58,10 +63,10 @@ Host: {self.host}"""
         if self.token is None:
             token_url = (
                 f"{self.host}/login/api/gettoken"
-                f"?ffauth_device_id={self._device_id}"
+                f"?ffauth_device_id={self.device_id}"
                 f"&ffauth_secret"
-                f"&device_id={self._device_id}"
-                f"&app_id={self._app_id}"
+                f"&device_id={self.device_id}"
+                f"&app_id={self.app_id}"
             )
             sanitised_token_url = urllib.parse.quote(token_url.encode("utf-8"))
             login_url = f"{self.host}/login/login.aspx?prelogin={sanitised_token_url}"
@@ -91,7 +96,7 @@ Host: {self.host}"""
         """
         url = (
             f"{self.host}/login/api/verifytoken"
-            f"?ffauth_device_id={self._device_id}"
+            f"?ffauth_device_id={self.device_id}"
             f"&ffauth_secret={self.token}"
         )
         res = requests.get(url=url, timeout=5)
@@ -99,7 +104,7 @@ Host: {self.host}"""
         if not res.ok or res.json()["valid"] is False:
             raise HandshakeError
 
-        self.session_id = res.cookies["ASP.NET_SessionId"]
+        self.session = res.cookies
         return True
 
     @property
