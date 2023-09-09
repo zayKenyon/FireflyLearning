@@ -2,7 +2,11 @@ from dotenv import dotenv_values
 
 from src.FireflyClient import Client
 
-if __name__ == "__main__":
+
+def main():
     config = dotenv_values(".env")
     client = Client(config)
-    print(client.api_version)
+
+
+if __name__ == "__main__":
+    main()

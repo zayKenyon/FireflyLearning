@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 import requests
 
-from .exceptions import InvalidSchoolCodeError, HandshakeError
+from .Exceptions import InvalidSchoolCodeError, HandshakeError
 
 
 class Client:
@@ -13,13 +13,13 @@ class Client:
     """
 
     def __init__(self, config):
-        self._device_id = config["DEVICE_ID"]
-        self._app_id = config["APP_ID"]
-        self.school_code = config["SCHOOL_CODE"]
-        self.host = self.__get_school_portal
-        self.token = config["TOKEN"] or None
-        self.session_id = None
-        self.valid = False
+        self._device_id: str = config["DEVICE_ID"]
+        self._app_id: str = config["APP_ID"]
+        self.school_code: str = config["SCHOOL_CODE"]
+        self.host: str = self.__get_school_portal
+        self.token: str = config["TOKEN"] or None
+        self.session_id: str | None = None
+        self.valid: bool = False
 
         self.__create_integration()
 

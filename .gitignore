@@ -6,6 +6,10 @@
 __pycache__/
 
 
+# Build Tools
+/docs
+
+
 # IDE
 .idea/
 .vscode/
