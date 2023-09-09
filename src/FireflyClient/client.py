@@ -118,10 +118,13 @@ Host: {self.host}"""
         address = root.find("address")
         return f"http{(address.get('ssl') == 'true') * 's'}://{address.text}"
 
-    def get_api_version(self) -> str:
+    @property
+    def api_version(self) -> str:
         """
         Fetches the current API version of Firefly.
-        :return: API version "v.X.Y.Z"
+
+        Returns:
+             API version "v.X.Y.Z"
         """
         res = requests.get(url=f"{self.host}/login/api/version", timeout=5)
         root = ElementTree.fromstring(res.text)
