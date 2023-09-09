@@ -26,7 +26,7 @@ class Client:
         self.token: str = config["TOKEN"] or None
         """Used to authenticate requests."""
         self.session_id: str | None = None
-        """Cached cookie to avoid re-authentication."""
+        """Cached 🍪 to avoid re-authentication."""
         self.ready_at: datetime.datetime | None = None
         """Time at which the client was last regarded as being authenticated."""
 
