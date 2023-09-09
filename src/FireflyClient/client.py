@@ -81,8 +81,8 @@ Host: {self.host}"""
             HandshakeError: If the Client could not authenticate.
         """
         url = (
-            f"{self.host}/login/api/verifytoken?"
-            f"ffauth_device_id={self._device_id}"
+            f"{self.host}/login/api/verifytoken"
+            f"?ffauth_device_id={self._device_id}"
             f"&ffauth_secret={self.token}"
         )
         res = requests.get(url=url, timeout=5)
