@@ -19,15 +19,41 @@ class TaskManager:
         Obtains tasks from Firefly, or the TaskManager `cache` if it's available.
 
         Args:
-            options (dict, optional): Task Fetch options. Defaults to None.
-                force (bool): Whether to skip cache, even if it's available.
+            options (:obj:`dict`, optional): Task Fetch options. Defaults to None.
+
+                - force (:obj:`bool`): Whether to skip cache, even if it's available.
+                    - Default: `False`
+                - archive_status (:obj:`str`): `All`
+                    - Default: `All`
+                - completion_status (:obj:`str`): `AllIncludingArchived`, `Todo`,
+                `DoneOrArchived`
+                    - Default: `Todo`
+                - owner_type (:obj:`str`): `OnlySetters`
+                    - Default: `OnlySetters`
+                - page (:obj:`int`): Results are paginated to prevent query spam.
+                    - Default: `0`
+                - page_size (:obj:`int`): Number of results per page.
+                    - Default: `100`
+                - sorting_criteria (:obj:`list[dict]`): `DueDate`, `SetDate`: Can be
+                either ascending or descending.
+                    - Default: `{ "column": "DueDate", "order": "Descending }`
+
 
         Examples:
             Force-fetching even when cache is available, use sparingly.
 
-            >>> <client>.tasks.fetch({force: True})
+            >>> <client>.tasks.fetch({"force": True})
             ...
         """
+        default_body = {
+            "archiveStatus": "All",
+            "completionStatus": "Todo",
+            "ownerType": "OnlySetters",
+            "page": 0,
+            "pageSize": 100,
+            "sortingCriteria": [{"column": "DueDate", "order": "Descending"}],
+        }
+
         if options is None:
             options = {"force": False}
 
@@ -40,12 +66,15 @@ class TaskManager:
             "ffauth_secret": self.client.token,
         }
         body = {
-            "archiveStatus": "All",
-            "completionStatus": "Todo",
-            "ownerType": "OnlySetters",
-            "page": 0,
-            "pageSize": 100,
-            "sortingCriteria": [{"column": "DueDate", "order": "Descending"}],
+            "archiveStatus": options.get("archive_status")
+            or default_body.get("archiveStatus"),
+            "completionStatus": options.get("completion_status")
+            or default_body.get("completionStatus"),
+            "ownerType": options.get("owner_type") or default_body.get("ownerType"),
+            "page": options.get("page") or default_body.get("page"),
+            "pageSize": options.get("page_size") or default_body.get("pageSize"),
+            "sortingCriteria": options.get("sorting_criteria")
+            or default_body.get("sortingCriteria"),
         }
 
         res = requests.post(
