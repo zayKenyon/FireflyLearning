@@ -43,7 +43,25 @@ class TaskManager:
             Force-fetching even when cache is available, use sparingly.
 
             >>> <client>.tasks.fetch({"force": True})
-            ...
+            [...]
+
+            Fetch all tasks that have been done.
+            >>> <client>.tasks.fetch({"completion_status": "DoneOrArchived"})
+            [...]
+
+            Fetch the oldest tasks that have been done.
+            >>> <client>.tasks.fetch(
+            >>>     {
+            >>>         "completion_status": "DoneOrArchived",
+            >>>         "sorting_criteria":
+            >>>             [
+            >>>                 {
+            >>>                     "column": "SetDate",
+            >>>                     "order": "Ascending"
+            >>>                 }
+            >>>             ]
+            >>>     }
+            >>> )
         """
         default_body = {
             "archiveStatus": "All",
