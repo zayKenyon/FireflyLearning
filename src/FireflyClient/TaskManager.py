@@ -62,6 +62,7 @@ class TaskManager:
             >>>             ]
             >>>     }
             >>> )
+            [...]
         """
         default_body = {
             "archiveStatus": "All",
