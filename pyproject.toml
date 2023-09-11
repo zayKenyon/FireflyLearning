@@ -1,9 +1,29 @@
-[FireflyClient]
-name = "FireflyClient"
-version = "0.0.1"
+[project]
+name = "FireflyLearning"
+version = "0.0.1a1"
+description = "An unofficial Python API wrapper for the Firefly Learning platform. "
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+keywords = ["Firefly", "Firefly Schools", "Firefly Cloud", ]
+authors = [
+    { name = "Zay Kenyon", email = "zaykenyon@pm.me" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "requests",
     "python-dotenv",
-    "pdoc",
-    "importlib-metadata; python version == '3",
 ]
+
+[project.urls]
+"Homepage" = "https://github.com/zayKenyon/FireflyLearning"
+"Documentation" = "https://zaykenyon.github.io/FireflyLearning/FireflyClient.html"
+"Bug Tracker" = "https://zaykenyon.github.io/FireflyLearning/FireflyClient.html"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

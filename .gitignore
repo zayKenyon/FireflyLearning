@@ -4,6 +4,8 @@
 
 # Python
 __pycache__/
+/dist
+src/FireflyLearning.egg-info/
 
 
 # Build Tools
