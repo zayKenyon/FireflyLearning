@@ -39,6 +39,8 @@ class TaskManager:
                     - Default: `0`
                 - page_size (:obj:`int`): Number of results per page.
                     - Default: `100`
+                - read_status (:obj:`str`): `All`, `OnlyRead`, `OnlyUnread`
+                    - Default: `All`
                 - sorting_criteria (:obj:`list[dict]`): `DueDate`, `SetDate`: Can be
                 either ascending or descending.
                     - Default: `{ "column": "DueDate", "order": "Descending }`
@@ -84,6 +86,7 @@ class TaskManager:
             "ownerType": "OnlySetters",
             "page": 0,
             "pageSize": 100,
+            "readStatus": "All",
             "sortingCriteria": [{"column": "DueDate", "order": "Descending"}],
         }
 
