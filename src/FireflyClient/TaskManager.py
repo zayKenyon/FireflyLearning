@@ -30,6 +30,9 @@ class TaskManager:
                 - completion_status (:obj:`str`): `AllIncludingArchived`, `Todo`,
                 `DoneOrArchived`
                     - Default: `Todo`
+                - marking_status (:obj:`str`): `All`, `OnlyMarked`,
+                `OnlyUnmarked`
+                    - Default: `All`
                 - owner_type (:obj:`str`): `OnlySetters`
                     - Default: `OnlySetters`
                 - page (:obj:`int`): Results are paginated to prevent query spam.
@@ -66,15 +69,6 @@ class TaskManager:
             >>> )
             [...]
         """
-        default_body = {
-            "archiveStatus": "All",
-            "completionStatus": "Todo",
-            "ownerType": "OnlySetters",
-            "page": 0,
-            "pageSize": 100,
-            "sortingCriteria": [{"column": "DueDate", "order": "Descending"}],
-        }
-
         if options is None:
             options = {"force": False}
 
@@ -82,20 +76,33 @@ class TaskManager:
             return self.cache
 
         url = f"{self.client.host}/api/v2/taskListing/view/student/tasks/all/filterBy"
-        payload = {
-            "ffauth_device_id": self.client.device_id,
-            "ffauth_secret": self.client.token,
+
+        default_body = {
+            "archiveStatus": "All",
+            "completionStatus": "Todo",
+            "markingStatus": "All",
+            "ownerType": "OnlySetters",
+            "page": 0,
+            "pageSize": 100,
+            "sortingCriteria": [{"column": "DueDate", "order": "Descending"}],
         }
+
         body = {
             "archiveStatus": options.get("archive_status")
             or default_body.get("archiveStatus"),
             "completionStatus": options.get("completion_status")
             or default_body.get("completionStatus"),
+            "markingStatus": options.get("marking_status")
+            or default_body.get("markingStatus"),
             "ownerType": options.get("owner_type") or default_body.get("ownerType"),
             "page": options.get("page") or default_body.get("page"),
             "pageSize": options.get("page_size") or default_body.get("pageSize"),
             "sortingCriteria": options.get("sorting_criteria")
             or default_body.get("sortingCriteria"),
+        }
+        payload = {
+            "ffauth_device_id": self.client.device_id,
+            "ffauth_secret": self.client.token,
         }
 
         res = requests.post(
