@@ -32,7 +32,7 @@ class Client:
         self.ready_at: datetime.datetime | None = None
         """Time at which the client was last regarded as being authenticated."""
 
-        self.tasks: TaskManager = TaskManager(self)
+        self.tasks: TaskManager = TaskManager(client=self)
         """All of the tasks relevant to the student user."""
 
         self.__create_integration()
@@ -76,7 +76,7 @@ Host: {self.host}"""
                 "\n",
                 login_url,
             )
-            return False
+            raise HandshakeError
 
         if self.__verify_integration():
             self.ready_at = datetime.datetime.now()
