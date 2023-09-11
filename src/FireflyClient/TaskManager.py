@@ -1,4 +1,6 @@
 """Manages API methods for tasks and stores their cache."""
+import json
+
 import requests
 
 
@@ -11,8 +13,8 @@ class TaskManager:
         self.cache: list | None = None
         """The cache of this manager."""
 
-    def __str__(self):
-        return self.fetch()
+    def __str__(self) -> str:
+        return json.dumps(self.fetch())
 
     def fetch(self, options=None) -> list:
         """
