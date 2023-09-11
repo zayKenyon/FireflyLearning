@@ -21,8 +21,8 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/zayKenyon/FireflyLearning"
-"Documentation" = "https://zaykenyon.github.io/FireflyLearning/FireflyClient.html"
-"Bug Tracker" = "https://zaykenyon.github.io/FireflyLearning/FireflyClient.html"
+"Documentation" = "https://zaykenyon.github.io/FireflyLearning/FireflyLearning.html"
+"Bug Tracker" = "https://github.com/zayKenyon/FireflyLearning/issues"
 
 [build-system]
 requires = ["setuptools>=61.0"]
